@@ -11,7 +11,7 @@ public interface ItemService {
 
     public ItemDto update(ItemDto itemDto, Long userId, Long itemId);
 
-    public void delete(Long itemId);
+    public void delete(Long itemId, Long userId);
 
     public List<ItemDto> searchItems(String text);
 }

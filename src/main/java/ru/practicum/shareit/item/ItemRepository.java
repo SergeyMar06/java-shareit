@@ -68,8 +68,9 @@ public class ItemRepository {
         if (item.getDescription() != null) {
             existing.setDescription(item.getDescription());
         }
-
-        existing.setAvailable(item.getAvailable());
+        if (item.getAvailable() != null) {
+            existing.setAvailable(item.getAvailable());
+        }
 
         return existing;
     }

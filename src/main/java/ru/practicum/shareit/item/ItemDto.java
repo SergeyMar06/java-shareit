@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.Data;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.UserDto;
 
 /**
@@ -13,6 +14,6 @@ public class ItemDto {
     private String description; // описание
     private Boolean available; // статус о том, доступна или нет вещь для аренды
     private UserDto owner; // владелец вещи
-    private String request; // если вещь была создана по запросу другого пользователя, то в этом
+    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом
     // поле будет храниться ссылка на соответствующий запрос
 }

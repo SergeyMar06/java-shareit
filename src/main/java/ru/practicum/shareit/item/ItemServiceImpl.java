@@ -61,9 +61,13 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public void delete(Long itemId) {
+    public void delete(Long itemId, Long userId) {
         if (itemId == null) {
             throw new IllegalArgumentException("Передан null вместо id");
+        }
+
+        if (!findById(itemId).getOwner().getId().equals(userId)) {
+            throw new UnauthorizedException("Вы не владелец");
         }
 
         itemRepository.delete(itemId);
