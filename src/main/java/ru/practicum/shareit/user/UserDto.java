@@ -3,11 +3,8 @@ package ru.practicum.shareit.user;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
-public class User {
+public class UserDto {
     private Long id; // id
     private String name; // имя
     @Email
