@@ -1,114 +1,42 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.Item;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import ru.practicum.shareit.exception.InvalidFormatException;
-
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-public class BookingRepository {
-    private List<Booking> bookings;
-    private ItemRepository itemRepository;
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    public BookingRepository(ItemRepository itemRepository) {
-        this.bookings = new ArrayList<>();
-        this.itemRepository = itemRepository;
-    }
+    List<Booking> findByBooker_Id(Long userId, Sort sort);
 
-    public List<Booking> findAll() {
-        return bookings;
-    }
+    List<Booking> findByItem_Owner_Id(Long ownerId, Sort sort);
 
-    public Booking findById(Long id) {
-        if (id == null) {
-            throw new InvalidFormatException("Передан null вместо id");
-        }
+    List<Booking> findByBooker_IdAndEndIsBefore(
+            Long userId,
+            LocalDateTime time,
+            Sort sort
+    );
 
-        return bookings.stream()
-                .filter(booking -> booking.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
+    List<Booking> findByBooker_IdAndStartIsAfter(
+            Long userId,
+            LocalDateTime time,
+            Sort sort
+    );
 
-    public Booking create(Booking booking) {
-        if (booking == null) {
-            throw new InvalidFormatException("Передан null вместо значения Booking");
-        }
+    List<Booking> findByBooker_IdAndStatus(
+            Long userId,
+            BookingStatus status,
+            Sort sort
+    );
 
-        Item item = itemRepository.findById(booking.getItem().getId());
+    List<Booking> findByItem_Owner_IdAndStatus(
+            Long ownerId,
+            BookingStatus status,
+            Sort sort
+    );
 
-        if (item == null) {
-            throw new NotFoundException("Item с ID = " + booking.getItem().getId() + " не найден");
-        }
+    List<Booking> findByItem_Id(Long itemId);
 
-        if (!item.getAvailable()) {
-            throw new InvalidFormatException("Вещь уже забронирована");
-        }
-
-        item.setAvailable(false);
-
-        booking.setItem(item);
-
-        booking.setId(generateId());
-
-        bookings.add(booking);
-
-        return booking;
-    }
-
-    public Booking update(Booking newBooking) {
-        if (newBooking == null) {
-            throw new InvalidFormatException("Передан null вместо объекта Booking");
-        }
-
-        if (newBooking.getId() == null) {
-            throw new InvalidFormatException("Booking должен иметь id");
-        }
-
-        Booking oldBooking = findById(newBooking.getId());
-
-        if (oldBooking == null) {
-            throw new InvalidFormatException("Объекта с ID = " + newBooking.getId() + " не существует");
-        }
-
-        if (newBooking.getStart() != null) {
-            oldBooking.setStart(newBooking.getStart());
-        }
-        if (newBooking.getEnd() != null) {
-            oldBooking.setEnd(newBooking.getEnd());
-        }
-        if (newBooking.getItem() != null) {
-            oldBooking.setItem(newBooking.getItem());
-        }
-        if (newBooking.getBooker() != null) {
-            oldBooking.setBooker(newBooking.getBooker());
-        }
-        if (newBooking.getStatus() != null) {
-            oldBooking.setStatus(newBooking.getStatus());
-        }
-
-        return oldBooking;
-    }
-
-    public void delete(Long id) {
-        if (id == null) {
-            throw new InvalidFormatException("Передан null вместо значения id");
-        }
-
-        findById(id).getItem().setAvailable(true);
-
-        bookings.remove(findById(id));
-    }
-
-    private long generateId() {
-        return bookings.stream()
-                .mapToLong(Booking::getId)
-                .max()
-                .orElse(0) + 1;
-    }
+    List<Booking> findByItem_IdAndBooker_IdAndStatus(Long itemId, Long bookerId, BookingStatus status);
 }

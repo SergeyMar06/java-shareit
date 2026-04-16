@@ -11,7 +11,11 @@ public class BookingMapper {
         bookingDto.setBooker(UserMapper.toDto(booking.getBooker()));
         bookingDto.setStart(booking.getStart());
         bookingDto.setEnd(booking.getEnd());
-        bookingDto.setStatus(booking.getStatus());
+        bookingDto.setStatus(
+                booking.getStatus() == null
+                        ? BookingStatus.WAITING
+                        : booking.getStatus()
+        );
 
         return bookingDto;
     }
@@ -23,7 +27,11 @@ public class BookingMapper {
         booking.setBooker(UserMapper.fromDto(bookingDto.getBooker()));
         booking.setStart(bookingDto.getStart());
         booking.setEnd(bookingDto.getEnd());
-        booking.setStatus(bookingDto.getStatus());
+        booking.setStatus(
+                bookingDto.getStatus() == null
+                        ? BookingStatus.WAITING
+                        : bookingDto.getStatus()
+        );
 
         return booking;
     }
